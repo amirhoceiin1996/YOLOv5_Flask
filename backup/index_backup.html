@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv5 Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 0 auto 1.5rem;
+        }
+        button {
+            display: block;
+            margin: 0 auto;
+            padding: 0.8rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #result-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1.5rem auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YOLOv5 Prediction</h1>
+        <input type="file" id="image-input" accept="image/*">
+        <button id="predict-button">Predict</button>
+        <img id="result-image" alt="Prediction Result">
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('image-input');
+        const predictButton = document.getElementById('predict-button');
+        const resultImage = document.getElementById('result-image');
+
+        predictButton.addEventListener('click', async () => {
+            const file = imageInput.files[0];
+            if (!file) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const imageBlob = await response.blob();
+                resultImage.src = URL.createObjectURL(imageBlob);
+            } catch (error) {
+                console.error('Error:', error);
+                resultImage.src = '';
+                alert('Error occurred during prediction.');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv5 Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #webcam-container {
+            display: none;
+        }
+        #result-image {
+            display: none;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YOLOv5 Prediction</h1>
+        <input type="file" id="image-input" accept="image/*">
+        <button id="predict-image-button">Predict Image</button>
+        <button id="predict-webcam-button">Use Webcam</button>
+        <button id="stop-webcam-button" style="display: none;">Stop Webcam</button>
+        <img id="result-image" alt="Prediction Result">
+        <div id="webcam-container">
+            <video id="webcam-video" autoplay></video>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('image-input');
+        const predictImageButton = document.getElementById('predict-image-button');
+        const predictWebcamButton = document.getElementById('predict-webcam-button');
+        const stopWebcamButton = document.getElementById('stop-webcam-button');
+        const resultImage = document.getElementById('result-image');
+        const webcamContainer = document.getElementById('webcam-container');
+        const webcamVideo = document.getElementById('webcam-video');
+
+        predictImageButton.addEventListener('click', async () => {
+            const file = imageInput.files[0];
+            if (!file) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/predict_image', {
+                    method: 'POST',
+                    body: formData
+                });
+                const imageBlob = await response.blob();
+                resultImage.src = URL.createObjectURL(imageBlob);
+                webcamContainer.style.display = 'none';
+                resultImage.style.display = 'block';
+                stopWebcamButton.style.display = 'none';
+            } catch (error) {
+                console.error('Error:', error);
+                resultImage.src = '';
+                alert('Error occurred during prediction.');
+            }
+        });
+
+        predictWebcamButton.addEventListener('click', () => {
+            webcamContainer.style.display = 'block';
+            resultImage.style.display = 'none';
+            predictWebcamButton.style.display = 'none';
+            stopWebcamButton.style.display = 'block';
+            webcamVideo.src = '/video_feed';
+        });
+
+        stopWebcamButton.addEventListener('click', () => {
+            webcamContainer.style.display = 'none';
+            resultImage.style.display = 'block';
+            predictWebcamButton.style.display = 'block';
+            stopWebcamButton.style.display = 'none';
+            const stream = webcamVideo.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            webcamVideo.srcObject = null;
+        });
+    </script>
+</body>
+</html>
+
+-->
